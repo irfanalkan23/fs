@@ -2,11 +2,28 @@ sequenceDiagram
     participant browser
     participant server
 
-    Note right of browser: User types a note and clicks "Save"
+    Note right of browser: User goes to the single-page app version of the notes app 
 
-    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/spa
     activate server
-    server-->>browser: HTTP 201 Created (JSON response)
-    deactivate server  
+    server-->>browser: HTML document
+    deactivate server
 
-    Note right of browser: The browser, using JavaScript (from spa.js), dynamically updates the UI to include the new note without refreshing the page.
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
+    activate server
+    server-->>browser: CSS file
+    deactivate server
+
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/spa.js
+    activate server
+    server-->>browser: JavaScript file (spa.js)
+    deactivate server
+
+    Note right of browser: The browser executes the JavaScript code (spa.js) and fetches the notes JSON data from the server
+
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
+    activate server
+    server-->>browser: JSON containing the notes
+    deactivate server
+
+    Note right of browser: The browser renders notes dynamically using JavaScript
