@@ -1,62 +1,63 @@
-const Header = (props) => {
-  console.log(props)
+import { useState } from 'react'
+
+const Button = (props) => {
   return (
-    <div>
-      <h1>{props.course.name}</h1>
-    </div>
+    <button onClick={props.onClick}>
+      {props.text}
+    </button>
   )
 }
 
-const Part = (props) => {
+const StatisticLine = (props) => {
   return (
-    <div>
-      <p>{props.name} {props.exercises}</p>
-    </div>
+    <tr>
+      <td>{props.text}</td>
+      <td>{props.value}</td>
+      <td>{props.text === "positive" ? "%" : ""}</td>
+    </tr>
   )
 }
 
-const Content = (props) => {
-  return (
-    <div>
-      <Part name={props.course.parts[0].name} exercises={props.course.parts[0].exercises} />
-      <Part name={props.course.parts[1].name} exercises={props.course.parts[1].exercises} />
-      <Part name={props.course.parts[2].name} exercises={props.course.parts[2].exercises} />
-    </div>
-  )
-}
-
-const Total = (props) => {
-  return (
-    <div>
-      <p>Number of exercises {props.course.parts[0].exercises + props.course.parts[1].exercises + props.course.parts[2].exercises}</p>
-    </div>
-  )
-}
-
-const App = () => {
-  const course = {
-    name: 'Half Stack application development',
-    parts: [
-      {
-        name: 'Fundamentals of React',
-        exercises: 10
-      },
-      {
-        name: 'Using props to pass data',
-        exercises: 7
-      },
-      {
-        name: 'State of a component',
-        exercises: 14
-      }
-    ]
+const Statistics = (props) => {
+  if ((props.good + props.neutral + props.bad) === 0) {
+    return (
+      <div>
+        <p>No feedback given</p>
+      </div>
+    )
   }
 
   return (
     <div>
-      <Header course={course} />
-      <Content course={course} />
-      <Total course={course} />
+      <table>
+        <tbody>
+          <StatisticLine text="good" value={props.good} />
+          <StatisticLine text="neutral" value={props.neutral} />
+          <StatisticLine text="bad" value={props.bad} />
+          <StatisticLine text="all" value={props.good + props.neutral + props.bad} />
+          <StatisticLine text="average" value={(props.good - props.bad) / (props.good + props.neutral + props.bad) || 0} />
+          <StatisticLine text="positive" value={props.good / (props.good + props.neutral + props.bad) * 100 || 0} />
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+// The state of the application should remain in the App root component.
+const App = () => {
+  // save clicks of each button to its own state
+  const [good, setGood] = useState(0)
+  const [neutral, setNeutral] = useState(0)
+  const [bad, setBad] = useState(0)
+
+  return (
+    <div>
+      <h2>give feedback</h2>
+      <Button onClick={() => setGood(good + 1)} text="good" />
+      <Button onClick={() => setNeutral(neutral + 1)} text="neutral" />
+      <Button onClick={() => setBad(bad + 1)} text="bad" />
+      <h2>statistics</h2>
+      <Statistics good={good} neutral={neutral} bad={bad} />
     </div>
   )
 }
